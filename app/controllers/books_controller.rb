@@ -1,22 +1,28 @@
 class BooksController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :ensure_correct_user, only:[:edit, :update]
+  before_action :ensure_correct_user, only:[:edit, :update, :destroy]
 
   def show
     @book = Book.find(params[:id])
     @user = @book.user
     @book_new = Book.new
-    @books = Book.all
     @book_comment = BookComment.new
-    @book_comments = BookComment.all
+    @see = See.find_by(ip: request.remote_ip) 
   end
 
   def index
+    to  = Time.current.at_end_of_day
+    from  = (to - 6.day).at_beginning_of_day
+    @books = Book.includes(:favorited_users).
+      sort {|a,b| 
+        b.favorited_users.includes(:favorites).where(created_at: from...to).size <=> 
+        a.favorited_users.includes(:favorites).where(created_at: from...to).size
+      }
     @book = Book.new
-    @books = Book.all
-    @user = current_user
+    @see = See.find_by(ip: request.remote_ip) 
   end
+
 
   def create
     @book = Book.new(book_params)
@@ -31,7 +37,7 @@ class BooksController < ApplicationController
   end
 
   def edit
-    @book = Book.find(params[:id])
+
   end
 
   def update
