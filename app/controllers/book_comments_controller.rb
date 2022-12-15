@@ -4,11 +4,13 @@ class BookCommentsController < ApplicationController
     @comment = current_user.book_comments.new(book_comment_params)
     @comment.book_id = book.id
     @comment.save
+    # app/views/book_comments/create.js.erbを参照する
   end
 
   def destroy
     @comment = BookComment.find(params[:id])
     @comment.destroy
+    # app/views/book_comments/destroy.js.erbを参照する
   end
 
   private

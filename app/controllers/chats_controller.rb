@@ -1,7 +1,7 @@
 class ChatsController < ApplicationController
   
   before_action :reject_non_related, only: [:show]
-  
+  #showアクションをする前に相互フォローかどうかを確認
   def show
     @user = User.find(params[:id]) #チャットする相手は誰か？
     rooms = current_user.user_rooms.pluck(:room_id)#ログイン中のユーザーの部屋情報を全て取得
